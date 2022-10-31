@@ -37,3 +37,6 @@
 ### 0 para espacios libres y 1 para paredes de los cuartos.
 ## Ruta Get para Solucion, ejemplo. Sustituir el nombre entre {} por uno real.
 ``` localhost:3000/jmhe-api/lights/setLigths/{1667172705996_prueba03.txt} ```
+
+## Ruta para acceder a la documentacion de Swagger
+``` localhost:3000/jmhe-api/docs ```
