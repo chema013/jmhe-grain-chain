@@ -1,15 +1,16 @@
 import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as dotenv from 'dotenv';
-dotenv.config();
+dotenv.config({ path: '../.env' });
 
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
-  const globalPrefix = process.env.GLOBAL_PREFIX;
+  const configService = app.get<ConfigService>(ConfigService);
+  const globalPrefix = configService.get('GLOBAL_PREFIX');
 
   app.useGlobalPipes(new ValidationPipe());
   app.setGlobalPrefix(globalPrefix);
@@ -24,6 +25,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup(`${globalPrefix}/docs`, app, document);
 
-  await app.listen(3000);
+  const port = configService.get('PORT')
+  await app.listen(port);
 }
 bootstrap();

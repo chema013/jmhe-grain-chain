@@ -16,12 +16,14 @@ import { LightsService } from './lights.service';
 import { diskStorage } from 'multer';
 import { LoadRoomTxtDto, SetLigthsParamsDTO } from './dto/request/loadtxt';
 import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { FormatResponseInterceptor } from 'src/common/interceptors/response.interceptor';
 
 @ApiTags('Lights')
 @Controller('lights')
 export class LightsController {
   constructor(private readonly lightsService: LightsService) {}
 
+  @UseInterceptors(FormatResponseInterceptor)
   @Get()
   findAll() {
     return this.lightsService.findAll();
@@ -57,18 +59,17 @@ export class LightsController {
       },
     }),
   )
+  @UseInterceptors(FormatResponseInterceptor)
   @Post('load-room')
   async loadTxt(
     @Body() CreateSignatureDto: LoadRoomTxtDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
     const data = await this.lightsService.loadTxt(file);
-    return {
-      message: 'success',
-      payload: data,
-    };
+    return [data];
   }
 
+  @UseInterceptors(FormatResponseInterceptor)
   @Get('setLigths/:fileName')
   async setLigths(@Param() params: SetLigthsParamsDTO) {
     return await this.lightsService.setLigths(params);

@@ -6,6 +6,8 @@ import {
 } from '@nestjs/common';
 import * as path from 'path';
 import * as fs from 'fs';
+import { color, log } from 'console-log-colors';
+const { red, green, cyan } = color;
 
 import { SetLigthsParamsDTO } from './dto/request/loadtxt';
 
@@ -65,7 +67,7 @@ export class LightsService {
       }
     }
 
-    return data;
+    return await data;
   }
 
   async setLigths(params: SetLigthsParamsDTO) {
@@ -106,15 +108,38 @@ export class LightsService {
       });
 
       let resultToString = '';
-      console.log('*********Resultado*********');
       for (const row of orderedResult[0].array) {
         let rowToString = row.join();
-        console.log(rowToString);
         resultToString = resultToString + rowToString + '\n';
       }
+      this.printResult(resultToString, orderedResult[0].numberOfLigths);
 
       return { ...orderedResult[0], array: resultToString };
     }
+  }
+
+  printResult(data: string, numberOfLigths: number) {
+    log.magenta('********* Resultado *********\n');
+    log.bgBlack(`Número de focos: ${numberOfLigths}`);
+    for (const item of data) {
+      if (item === 'L') {
+        process.stdout.write(`${red(item)}`);
+      } else if (item === '0') {
+        process.stdout.write(`${green(item)}`);
+      } else if (item === '1') {
+        process.stdout.write(`${cyan(item)}`);
+      } else if (item === ',') {
+        process.stdout.write(` `);
+      } else if (item === '\n') {
+        console.log();
+      }
+    }
+    /*
+    log.red('perro');
+    log.blue('Gato');
+    process.stdout.write(`${red("color.red('text')"), green('perro')}`);
+    process.stdout.write(`${red("color.red('text')")}`);
+    */
   }
 
   doAlgoritm(
